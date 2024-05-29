@@ -29,7 +29,6 @@ class StoreVehicleRequest extends FormRequest
             'FuelConsumptionPerKM' => 'required|numeric',
             'ServiceIntervalKM' => 'required|integer',
             'Ownership' => 'required|in:Company,Rented',
-
         ];
     }
 }

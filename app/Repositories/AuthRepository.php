@@ -37,31 +37,34 @@ class AuthRepository implements AuthRepositoryInterface
 
     public function login($data)
     {
-        $credentials = $data;
+        if (Auth::attempt($data)) {
+            $user = Auth::user();
+            $adminOrManager = null;
 
-        if (!$token = Auth::guard('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            if ($user->role === 'admin') {
+                $adminOrManager = Admin::where('UserID', $user->id)->first();
+            } else if ($user->role === 'approver1') {
+                $adminOrManager = BranchManager::where('UserID', $user->id)->first();
+            } else if ($user->role === 'approver2') {
+                $adminOrManager = HeadOfficeManager::where('UserID', $user->id)->first();
+            }
+
+            return [
+                'status' => 200,
+                'user' => $user,
+                'adminOrManager' => $adminOrManager
+            ];
         }
 
-        $user = Auth::guard('api')->user();
-        $adminOrManager = null;
-        if ($user->role === 'admin') {
-            $adminOrManager = Admin::where('UserID', $user->id)->first();
-        } else if ($user->role === 'approver1') {
-            $adminOrManager = BranchManager::where('UserID', $user->id)->first();
-        } else if ($user->role === 'approver2') {
-            $adminOrManager = HeadOfficeManager::where('UserID', $user->id)->first();
-        }
-
-        return response()->json([
-            'token' => $token,
-            'adminOrManager' => $adminOrManager,
-        ]);
+        return [
+            'status' => 401,
+            'error' => 'Unauthorized'
+        ];
     }
 
     public function logout()
     {
-        Auth::guard('api')->logout();
+        Auth::guard('web')->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 }

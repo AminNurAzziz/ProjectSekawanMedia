@@ -32,4 +32,9 @@ class BranchManagerService
     {
         return $this->branchManagerRepository->delete($id);
     }
+
+    public function approvalByBranchManager($id)
+    {
+        return $this->branchManagerRepository->approvalByBranchManager($id);
+    }
 }

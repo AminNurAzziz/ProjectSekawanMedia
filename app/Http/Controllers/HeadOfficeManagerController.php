@@ -21,7 +21,8 @@ class HeadOfficeManagerController extends Controller
     public function index()
     {
         $headOfficeManagers = $this->headOfficeManagerService->getAllHeadOfficeManagers();
-        return response()->json($headOfficeManagers);
+        // return response()->json($headOfficeManagers);
+        return view('head-office-managers.index', compact('headOfficeManagers'));
     }
 
     /**
@@ -39,12 +40,7 @@ class HeadOfficeManagerController extends Controller
     {
         $data = $request->validated();
         $headOfficeManager = $this->headOfficeManagerService->createHeadOfficeManager($data);
-        return response()->json(
-            [
-                'message' => 'Head Office Manager created successfully',
-                // 'headOfficeManager' => $headOfficeManager
-            ]
-        );
+        return redirect('/head-office-managers')->with('success', 'Head Office Manager created successfully');
     }
 
     /**
@@ -70,12 +66,7 @@ class HeadOfficeManagerController extends Controller
     {
         $data = $request->validated();
         $headOfficeManager = $this->headOfficeManagerService->updateHeadOfficeManager($data, $headOfficeManager->HeadManagerID);
-        return response()->json(
-            [
-                'message' => 'Head Office Manager updated successfully',
-                // 'headOfficeManager' => $headOfficeManager
-            ]
-        );
+        return redirect('/head-office-managers')->with('success', 'Head Office Manager updated successfully');
     }
 
     /**
@@ -84,10 +75,6 @@ class HeadOfficeManagerController extends Controller
     public function destroy(HeadOfficeManager $headOfficeManager)
     {
         $this->headOfficeManagerService->deleteHeadOfficeManager($headOfficeManager->HeadManagerID);
-        return response()->json(
-            [
-                'message' => 'Head Office Manager deleted successfully'
-            ]
-        );
+        return redirect('/head-office-managers')->with('success', 'Head Office Manager deleted successfully');
     }
 }

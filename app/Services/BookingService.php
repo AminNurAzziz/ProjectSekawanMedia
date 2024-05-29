@@ -24,6 +24,11 @@ class BookingService
         $this->BookingHistoryService = $HistoryBookingService;
     }
 
+    public function index()
+    {
+        return $this->bookingRepository->index();
+    }
+
     public function store(array $bookingData)
     {
         $vehicle = $this->vehicleRepository->find($bookingData['VehicleID']);
@@ -37,17 +42,24 @@ class BookingService
         return $this->bookingRepository->create($bookingData);
     }
 
-    public function updateApproval(Booking $booking)
+
+    public function updateApproval(Booking $booking, $bookingStatus)
     {
         try {
-
-            // $role_user = auth()->user()->role;
-            $role_user = 'approver2';
-            $this->bookingRepository->updateApproval($booking, $role_user);
-            if ($booking->BranchManagerApproval && $booking->HeadOfficeManagerApproval) {
+            $role_user = auth()->user()->role;
+            $this->bookingRepository->updateApproval($booking, $role_user, $bookingStatus);
+            if ($booking->BranchManagerApproval === 'Approved' && $booking->HeadOfficeManagerApproval === 'Approved') {
+                $booking->BookingStatus = 'Approved';
                 $vehicle = $this->vehicleRepository->find($booking->VehicleID);
                 $vehicle->VehicleStatus = 'On-Trip';
                 $vehicle->save();
+
+                $this->BookingHistoryService->store([
+                    'BookingID' => $booking->BookingID,
+                    'LastKM' => $vehicle->LastKM,
+                    'FuelConsumption' => 0,
+                    'BookingStatus' => 'On-Trip',
+                ]);
             }
 
             $booking->save();
@@ -100,5 +112,12 @@ class BookingService
     public function getBookingByVehicleID($id)
     {
         return $this->bookingRepository->getBookingByVehicle($id);
+    }
+
+    public function getBookingsForApproval($userID)
+    {
+        $bookings = $this->bookingRepository->getBookingsForApproval($userID);
+
+        return $bookings;
     }
 }

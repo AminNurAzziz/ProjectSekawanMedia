@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Services\AuthService;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -31,20 +32,23 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string'
-        ]);
+        $credentials = $request->only('username', 'password');
 
-        $user = $this->authService->login($data);
+        $response = $this->authService->login($credentials);
+        // dd($response);
+        if ($response['status'] == 200) {
+            Session::put('user', $response['user']);
+            Session::put('adminOrManager', $response['adminOrManager']);
+            return redirect("/dashboard");
+        }
 
-        return response()->json($user, 200);
+        return redirect("/login")->with('error', 'Invalid credentials');
     }
 
     public function logout()
     {
         $this->authService->logout();
 
-        return response()->json(['message' => 'Successfully logged out'], 200);
+        return redirect("/login")->with('success', 'Logged out successfully');
     }
 }

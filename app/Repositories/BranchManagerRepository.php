@@ -6,6 +6,8 @@ use App\Models\BranchManager;
 use App\Interfaces\BranchManagerRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Log;
 
 class BranchManagerRepository implements BranchManagerRepositoryInterface
 {
@@ -45,10 +47,30 @@ class BranchManagerRepository implements BranchManagerRepositoryInterface
         $allBranch = DB::table('branch_managers')
             ->join('branches', 'branch_managers.BranchID', '=', 'branches.BranchID')
             ->join('positions', 'branch_managers.PositionID', '=', 'positions.PositionID')
-            // ->select('branch_managers.*', 'branches.BranchName as branch_name', 'positions.PositionName as position_name')
-            ->select('branch_managers.ManagerID', 'branch_managers.Name', 'branch_managers.PhoneNumber', 'branches.BranchName as branch_name', 'positions.PositionName as position_name')
+            ->select(
+                'branch_managers.ManagerID',
+                'branch_managers.Name',
+                'branch_managers.PhoneNumber',
+                'branches.BranchID',
+                'positions.PositionID',
+                'branches.BranchName as branch_name',
+                'positions.PositionName as position_name'
+            )
             ->get();
 
         return $allBranch;
+    }
+
+    public function approvalByBranchManager($userID)
+    {
+        // Lakukan query untuk mengambil daftar booking yang perlu di-approve oleh pengguna
+        $bookings = Booking::where('BranchManagerID', $userID)
+            ->join('branch_managers', 'bookings.BranchManagerID', '=', 'branch_managers.ManagerID')
+            ->where('BranchManagerApproval', false)
+            ->get();
+
+        Log::info($bookings);
+
+        return $bookings;
     }
 }

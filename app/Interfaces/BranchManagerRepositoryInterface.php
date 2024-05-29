@@ -9,4 +9,5 @@ interface BranchManagerRepositoryInterface
     public function delete($id);
     public function find($id);
     public function all();
+    public function approvalByBranchManager($id);
 }

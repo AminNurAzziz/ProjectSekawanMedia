@@ -18,8 +18,9 @@ return new class extends Migration
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicles')->onDelete('set null');
             $table->foreignId('DriverID')->nullable()->constrained('company_drivers', 'DriverID')->onDelete('set null');
             $table->date('BookingDate');
-            $table->boolean('BranchManagerApproval')->default(false);
-            $table->boolean('HeadOfficeManagerApproval')->default(false);
+            $table->string('BookingStatus', 50)->enum(['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->string('BranchManagerApproval', 50)->enum(['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->string('HeadOfficeManagerApproval', 50)->enum(['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->unsignedBigInteger('BranchManagerID');
             $table->unsignedBigInteger('HeadOfficeManagerID');
             $table->foreign('BranchManagerID')->nullable()->references('ManagerID')->on('branch_managers')->onDelete('cascade');

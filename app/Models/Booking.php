@@ -9,10 +9,15 @@ class Booking extends Model
 {
     use HasFactory;
     protected $primaryKey = 'BookingID';
-    protected $fillable = ['BookerName', 'VehicleID', 'DriverID', 'BookingDate', 'BranchManagerApproval', 'HeadOfficeManagerApproval', 'BranchManagerID', 'HeadOfficeManagerID'];
+    protected $fillable = ['BookerName', 'VehicleID', 'DriverID', 'BookingStatus', 'BookingDate', 'BranchManagerApproval', 'HeadOfficeManagerApproval', 'BranchManagerID', 'HeadOfficeManagerID'];
 
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class, 'VehicleID', 'VehicleID');
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(CompanyDriver::class, 'DriverID', 'DriverID');
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Position;
 use App\Http\Requests\StorePositionRequest;
 use App\Http\Requests\UpdatePositionRequest;
 use App\Services\PositionService;
+use Illuminate\Support\Facades\Log;
 
 class PositionController extends Controller
 {
@@ -20,7 +21,9 @@ class PositionController extends Controller
      */
     public function index()
     {
-        //
+        $positions = $this->positionService->getAllPositions();
+        return view('positions.index', compact('positions'));
+        // return response()->json($positions);
     }
 
     /**
@@ -36,7 +39,8 @@ class PositionController extends Controller
      */
     public function store(StorePositionRequest $request)
     {
-        //
+        $this->positionService->createPosition($request->validated());
+        return redirect('/positions')->with('success', 'Position created successfully');
     }
 
     /**
@@ -60,7 +64,10 @@ class PositionController extends Controller
      */
     public function update(UpdatePositionRequest $request, Position $position)
     {
-        //
+
+        Log::info('Position updated successfully' . $position);
+        $this->positionService->updatePosition($request->validated(), $position);
+        return redirect('/positions')->with('success', 'Position updated successfully');
     }
 
     /**
@@ -68,6 +75,7 @@ class PositionController extends Controller
      */
     public function destroy(Position $position)
     {
-        //
+        $this->positionService->deletePosition($position);
+        return redirect('/positions')->with('success', 'Position deleted successfully');
     }
 }

@@ -19,18 +19,12 @@ class VehicleController extends Controller
     public function index()
     {
         $vehicles = $this->vehicleService->index();
-        return response()->json(
-            [
-                'status' => 'success',
-                'data' => $vehicles
-            ],
-            200
-        );
+        return view('vehicles.index', compact('vehicles'));
     }
 
     public function create()
     {
-        //
+        return view('vehicles.create');
     }
 
     /**
@@ -40,13 +34,7 @@ class VehicleController extends Controller
     {
         $dataVehicle = $request->validated();
         $vehicle = $this->vehicleService->store($dataVehicle);
-        return response()->json(
-            [
-                'status' => 'success',
-                'data' => $vehicle
-            ],
-            201
-        );
+        return redirect('vehicles')->with('success', 'Vehicle created successfully');
     }
 
     /**
@@ -73,24 +61,12 @@ class VehicleController extends Controller
         Log::info('VehicleController update' . json_encode($request->validated()));
         $dataVehicle = $request->validated();
         $vehicle = $this->vehicleService->update($dataVehicle, $vehicle->VehicleID);
-        return response()->json(
-            [
-                'status' => 'success',
-                'message' => 'Successfully updated vehicle',
-            ],
-            200
-        );
+        return redirect('vehicles')->with('success', 'Vehicle updated successfully');
     }
 
     public function destroy(Vehicle $vehicle)
     {
         $this->vehicleService->delete($vehicle->VehicleID);
-        return response()->json(
-            [
-                'status' => 'success',
-                'message' => 'Successfully deleted vehicle',
-            ],
-            200
-        );
+        return redirect('vehicles')->with('success', 'Vehicle deleted successfully');
     }
 }

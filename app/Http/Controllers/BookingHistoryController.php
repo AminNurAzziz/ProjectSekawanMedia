@@ -21,7 +21,8 @@ class BookingHistoryController extends Controller
     public function index()
     {
         $getHistoryBooking = $this->bookingHistoryService->getHistoryBooking();
-        return response()->json($getHistoryBooking);
+
+        return view('booking-histories.index', compact('getHistoryBooking'));
     }
 
     /**

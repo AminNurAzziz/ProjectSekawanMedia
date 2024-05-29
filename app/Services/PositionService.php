@@ -13,5 +13,23 @@ class PositionService
         $this->positionRepository = $positionRepository;
     }
 
-    // Implementasi metode lainnya sesuai kebutuhan aplikasi Anda
+    public function getAllPositions()
+    {
+        return $this->positionRepository->all();
+    }
+
+    public function createPosition($data)
+    {
+        return $this->positionRepository->create($data);
+    }
+
+    public function updatePosition($data, $id)
+    {
+        return $this->positionRepository->update($data, $id);
+    }
+
+    public function deletePosition($id)
+    {
+        return $this->positionRepository->delete($id);
+    }
 }

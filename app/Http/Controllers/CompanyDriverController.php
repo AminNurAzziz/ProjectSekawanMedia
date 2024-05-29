@@ -21,7 +21,8 @@ class CompanyDriverController extends Controller
     public function index()
     {
         $companyDrivers = $this->companyDriverService->getAllCompanyDrivers();
-        return response()->json($companyDrivers);
+
+        return view('company-drivers.index', compact('companyDrivers'));
     }
 
     /**
@@ -38,13 +39,8 @@ class CompanyDriverController extends Controller
     public function store(StoreCompanyDriverRequest $request)
     {
         $data = $request->validated();
-        $companyDriver = $this->companyDriverService->createCompanyDriver($data);
-        return response()->json(
-            [
-                'message' => 'Company Driver created successfully',
-                // 'companyDriver' => $companyDriver
-            ]
-        );
+        $this->companyDriverService->createCompanyDriver($data);
+        return redirect('/company-drivers')->with('success', 'Company Driver created successfully');
     }
 
     /**
@@ -71,12 +67,7 @@ class CompanyDriverController extends Controller
         $data = $request->validated();
         $companyDriver = $this->companyDriverService->updateCompanyDriver($data, $companyDriver->DriverID);
 
-        return response()->json(
-            [
-                'message' => 'Company Driver updated successfully',
-                // 'companyDriver' => $companyDriver
-            ]
-        );
+        return redirect('/company-drivers')->with('success', 'Company Driver updated successfully');
     }
 
     /**

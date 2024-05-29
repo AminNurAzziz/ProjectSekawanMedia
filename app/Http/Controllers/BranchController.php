@@ -22,7 +22,7 @@ class BranchController extends Controller
     public function index()
     {
         $branches = $this->branchService->getAllBranches();
-        return response()->json($branches);
+        return view('branches.index', compact('branches'));
     }
 
     /**
@@ -40,12 +40,7 @@ class BranchController extends Controller
     {
         $data = $request->validated();
         $branch = $this->branchService->createBranch($data);
-        return response()->json(
-            [
-                'message' => 'Branch created successfully',
-                // 'branch' => $branch
-            ]
-        );
+        return redirect('/branches')->with('success', 'Branch created successfully');
     }
 
     /**
@@ -71,12 +66,7 @@ class BranchController extends Controller
     {
         $data = $request->validated();
         $branch = $this->branchService->updateBranch($data, $branch->BranchID);
-        return response()->json(
-            [
-                'message' => 'Branch updated successfully',
-                // 'branch' => $branch
-            ]
-        );
+        return redirect('/branches')->with('success', 'Branch updated successfully');
     }
 
     /**
@@ -85,11 +75,6 @@ class BranchController extends Controller
     public function destroy(Branch $branch)
     {
         $branch = $this->branchService->deleteBranch($branch->BranchID);
-        return response()->json(
-            [
-                'message' => 'Branch deleted successfully',
-                // 'branch' => $branch
-            ]
-        );
+        return redirect('/branches')->with('success', 'Branch deleted successfully');
     }
 }

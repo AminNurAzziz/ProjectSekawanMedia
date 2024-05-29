@@ -9,5 +9,5 @@ class Vehicle extends Model
 {
     use HasFactory;
     protected $primaryKey = 'VehicleID';
-    protected $fillable = ['VehicleID', 'VehicleModel', 'VehicleType', 'VehicleStatus', 'FuelConsumptionPerKM', 'ServiceIntervalKM', 'LastKM', 'Ownership'];
+    protected $fillable = ['VehicleID', 'VehicleModel', 'VehicleType', 'VehicleStatus', 'FuelConsumptionPerKM', 'ServiceIntervalKM', 'LastKM', 'KM_Need_Service', 'Ownership'];
 }

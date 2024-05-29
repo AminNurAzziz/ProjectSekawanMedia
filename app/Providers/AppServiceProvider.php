@@ -56,6 +56,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Interfaces\AuthRepositoryInterface::class,
             \App\Repositories\AuthRepository::class
         );
+
+        $this->app->bind(
+            \App\Interfaces\PositionRepositoryInterface::class,
+            \App\Repositories\PositionRepository::class
+        );
     }
 
     /**

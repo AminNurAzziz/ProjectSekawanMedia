@@ -14,10 +14,11 @@ class PositionRepository implements PositionRepositoryInterface
 
     public function update(array $data, $id)
     {
-        $position = Position::findOrFail($id);
+        $position = Position::findOrFail($id->PositionID);
         $position->update($data);
         return $position;
     }
+
 
     public function delete($id)
     {

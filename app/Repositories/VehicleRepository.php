@@ -10,8 +10,21 @@ class VehicleRepository implements VehicleRepositoryInterface
 {
     public function create(array $data)
     {
-        Log::info('VehicleRepository create' . json_encode($data));
-        return Vehicle::create($data);
+        $KM_Need_Service = $data['ServiceIntervalKM'];
+        $vehicle = Vehicle::create(
+            [
+                'VehicleID' => $data['VehicleID'],
+                'VehicleModel' => $data['VehicleModel'],
+                'VehicleType' => $data['VehicleType'],
+                'VehicleStatus' => $data['VehicleStatus'],
+                'FuelConsumptionPerKM' => $data['FuelConsumptionPerKM'],
+                'ServiceIntervalKM' => $data['ServiceIntervalKM'],
+                'KM_Need_Service' => $KM_Need_Service,
+                'Ownership' => $data['Ownership'],
+            ]
+        );
+
+        return $vehicle;
     }
 
     public function update(array $data, $id)

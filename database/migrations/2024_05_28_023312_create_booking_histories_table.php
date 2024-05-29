@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('ReturnDate');
             $table->integer('LastOdometerReading');
             $table->float('FuelUsed');
-            $table->enum('BookingStatus', ['Completed', 'Cancelled']);
+            $table->enum('BookingStatus', ['Cancelled', 'On-Trip', 'Completed'])->default('On-Trip');
             $table->timestamps();
         });
     }

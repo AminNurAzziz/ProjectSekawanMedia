@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class StoreBookingRequest extends FormRequest
 {
@@ -21,6 +22,7 @@ class StoreBookingRequest extends FormRequest
      */
     public function rules(): array
     {
+        Log::info('StoreBookingRequest: ' . json_encode($this->all()));
         return [
             'BookerName' => 'required|string|max:100',
             'VehicleID' => 'required|exists:vehicles,VehicleID',

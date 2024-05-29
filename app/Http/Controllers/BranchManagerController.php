@@ -6,14 +6,21 @@ use App\Models\BranchManager;
 use App\Http\Requests\StoreBranchManagerRequest;
 use App\Http\Requests\UpdateBranchManagerRequest;
 use App\Services\BranchManagerService;
+use App\Services\BranchService;
+use App\Services\PositionService;
+use Illuminate\Support\Facades\Log;
 
 class BranchManagerController extends Controller
 {
     protected $branchManagerService;
+    protected $branchService;
+    protected $positionService;
 
-    public function __construct(BranchManagerService $branchManagerService)
+    public function __construct(BranchManagerService $branchManagerService, BranchService $branchService, PositionService $positionService)
     {
         $this->branchManagerService = $branchManagerService;
+        $this->branchService = $branchService;
+        $this->positionService = $positionService;
     }
 
     /**
@@ -22,7 +29,9 @@ class BranchManagerController extends Controller
     public function index()
     {
         $branchManagers = $this->branchManagerService->getAllBranchManagers();
-        return response()->json($branchManagers);
+        $branches = $this->branchService->getAllBranches();
+        $positions = $this->positionService->getAllPositions();
+        return view('branch-managers.index', compact('branchManagers', 'branches', 'positions'));
     }
 
     /**
@@ -40,12 +49,7 @@ class BranchManagerController extends Controller
     {
         $data = $request->validated();
         $branchManager = $this->branchManagerService->createBranchManager($data);
-        return response()->json(
-            [
-                'message' => 'Branch Manager created successfully',
-                // 'branchManager' => $branchManager
-            ]
-        );
+        return redirect('/branch-managers')->with('success', 'Branch Manager created successfully');
     }
 
     /**
@@ -72,12 +76,7 @@ class BranchManagerController extends Controller
         $data = $request->validated();
         $branchManager = $this->branchManagerService->updateBranchManager($data, $branchManager->ManagerID);
 
-        return response()->json(
-            [
-                'message' => 'Branch Manager updated successfully',
-                // 'branchManager' => $branchManager
-            ]
-        );
+        return redirect('/branch-managers')->with('success', 'Branch Manager updated successfully');
     }
 
     /**
@@ -86,6 +85,17 @@ class BranchManagerController extends Controller
     public function destroy(BranchManager $branchManager)
     {
         $this->branchManagerService->deleteBranchManager($branchManager->ManagerID);
-        return response()->json(['message' => 'Branch Manager deleted successfully']);
+        return redirect('/branch-managers')->with('success', 'Branch Manager deleted successfully');
+    }
+
+    public function approvalsToMake()
+    {
+        // Ambil daftar booking yang perlu di-approve oleh pengguna
+        $bookings = $this->branchManagerService->approvalByBranchManager(auth()->user()->id);
+
+        // Kembalikan response JSON
+        // return response()->json(['bookings' => $bookings], 200);
+
+        return view('branch-managers.approvals', compact('bookings'));
     }
 }
