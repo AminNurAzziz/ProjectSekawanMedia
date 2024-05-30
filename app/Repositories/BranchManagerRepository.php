@@ -39,7 +39,7 @@ class BranchManagerRepository implements BranchManagerRepositoryInterface
 
     public function find($id)
     {
-        return BranchManager::findOrFail($id);
+        return BranchManager::where('UserID', $id)->first();
     }
 
     public function all()
@@ -63,14 +63,14 @@ class BranchManagerRepository implements BranchManagerRepositoryInterface
 
     public function approvalByBranchManager($userID)
     {
-        // Lakukan query untuk mengambil daftar booking yang perlu di-approve oleh pengguna
-        $bookings = Booking::where('BranchManagerID', $userID)
+        $bookings = Booking::where(function ($query) use ($userID) {
+            $query->where('BranchManagerID', $userID)
+                ->orWhere('HeadOfficeManagerID', $userID);
+        })
             ->join('branch_managers', 'bookings.BranchManagerID', '=', 'branch_managers.ManagerID')
-            ->where('BranchManagerApproval', false)
             ->get();
 
-        Log::info($bookings);
-
+        // dd($bookings);
         return $bookings;
     }
 }

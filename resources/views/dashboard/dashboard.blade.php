@@ -3,13 +3,17 @@
 @section('title', 'Home')
 
 @section('content')
-
+d
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
             <div>
+                <a href="/booking-histories" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                    <i class="fas fa-car fa-sm text-white-50"></i> History Bookings
+                </a>
+
                 <a href="{{ route('dashboard.pdf') }}" class="d-none d-sm-inline-block btn btn-danger shadow-sm">
                     <i class="fas fa-download fa-sm text-white-50"></i> Download Report (PDF)
                 </a>
@@ -122,7 +126,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $vehicle['VehicleModel'] }}</td>
                                             <td>{{ $vehicle['VehicleType'] }}</td>
-                                            <td>{{ $vehicle['VehicleStatus'] }}</td>
+                                            <td class=" @if($vehicle['VehicleStatus'] == 'Available') text-success @elseif($vehicle['VehicleStatus'] == 'Under-Maintenance') text-danger @else text-info @endif"> <b>{{ $vehicle['VehicleStatus'] }}</b></td>
                                             
                                             <td>{{ $vehicle['LastBBM'] }}</td>
                                             <td>

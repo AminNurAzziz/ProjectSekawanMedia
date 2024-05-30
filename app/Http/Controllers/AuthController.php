@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -13,6 +13,18 @@ class AuthController extends Controller
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
+    }
+
+    public function showLoginForm()
+    {
+        if (Auth::check()) {
+            if (Session::get('adminOrManager') == 'admin') {
+                return redirect('/dashboard');
+            } else {
+                return redirect('/approval');
+            }
+        }
+        return view('auth.login');
     }
 
     public function register(Request $request)
@@ -39,7 +51,12 @@ class AuthController extends Controller
         if ($response['status'] == 200) {
             Session::put('user', $response['user']);
             Session::put('adminOrManager', $response['adminOrManager']);
-            return redirect("/dashboard");
+
+            if (Auth::user()->role == 'admin') {
+                return redirect('/dashboard');
+            } else if (Auth::user()->role == 'approver1' || Auth::user()->role == 'approver2') {
+                return redirect('/approval');
+            }
         }
 
         return redirect("/login")->with('error', 'Invalid credentials');

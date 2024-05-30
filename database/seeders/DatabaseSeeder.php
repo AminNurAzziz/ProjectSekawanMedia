@@ -2,16 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\BranchManager;
-use App\Models\Branch;
-use App\Models\CompanyDriver;
-use App\Models\HeadOfficeManager;
-use App\Models\Position;
-use App\Models\Vehicle;
-use App\Models\Booking;
-use App\Models\BookingHistory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 
@@ -22,20 +15,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Branch::factory(5)->create();
+        // Position::factory(5)->create();
+        // HeadOfficeManager::factory(5)->create();
+        // BranchManager::factory(5)->create();
+        // CompanyDriver::factory(5)->create();
+        // Vehicle::factory(5)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        Branch::factory(10)->create();
-        Position::factory(10)->create();
-        HeadOfficeManager::factory(10)->create();
-        BranchManager::factory(10)->create();
-        CompanyDriver::factory(10)->create();
-        Vehicle::factory(10)->create();
-        // Booking::factory(10)->create();
-        // BookingHistory::factory(10)->create();
+        $this->call([
+            UserSeeder::class,
+            BranchSeeder::class,
+            PositionSeeder::class,
+            HeadOfficeManagerSeeder::class,
+            BranchManagerSeeder::class,
+            CompanyDriverSeeder::class,
+            VehicleSeeder::class,
+            BookingSeeder::class,
+            BookingHistorySeeder::class,
+        ]);
     }
 }

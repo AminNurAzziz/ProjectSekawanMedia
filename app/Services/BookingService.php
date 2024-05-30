@@ -62,6 +62,13 @@ class BookingService
                 ]);
             }
 
+            if ($booking->BranchManagerApproval === 'Rejected' || $booking->HeadOfficeManagerApproval === 'Rejected') {
+                $booking->BookingStatus = 'Rejected';
+                $vehicle = $this->vehicleRepository->find($booking->VehicleID);
+                $vehicle->VehicleStatus = 'Available';
+                $vehicle->save();
+            }
+
             $booking->save();
 
             return $booking;

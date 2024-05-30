@@ -32,4 +32,15 @@ class VehicleService
     {
         return $this->vehicleRepository->delete($id);
     }
+
+    public function resetKMService($id)
+    {
+        return $this->vehicleRepository->resetKMService($id);
+    }
+
+
+    public function addBBM($id, $data)
+    {
+        return $this->vehicleRepository->addBBM($id, $data);
+    }
 }

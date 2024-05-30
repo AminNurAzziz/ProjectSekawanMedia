@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookingHistory;
-use App\Http\Requests\StoreBookingHistoryRequest;
-use App\Http\Requests\UpdateBookingHistoryRequest;
 use App\Services\BookingHistoryService;
+use Illuminate\Support\Facades\Log;
 
 class BookingHistoryController extends Controller
 {
@@ -13,63 +11,20 @@ class BookingHistoryController extends Controller
 
     public function __construct(BookingHistoryService $bookingHistoryService)
     {
+        parent::__construct();
         $this->bookingHistoryService = $bookingHistoryService;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $getHistoryBooking = $this->bookingHistoryService->getHistoryBooking();
+        try {
+            $getHistoryBooking = $this->bookingHistoryService->getHistoryBooking();
 
-        return view('booking-histories.index', compact('getHistoryBooking'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBookingHistoryRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(BookingHistory $bookingHistory)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BookingHistory $bookingHistory)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBookingHistoryRequest $request, BookingHistory $bookingHistory)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(BookingHistory $bookingHistory)
-    {
-        //
+            $this->logService->createLog('Fetched booking histories successfully', 'fetch');
+            return view('booking-histories.index', compact('getHistoryBooking'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch booking histories: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch booking histories: ' . $e->getMessage());
+        }
     }
 }

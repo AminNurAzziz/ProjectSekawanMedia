@@ -7,7 +7,7 @@
 <div class="container-fluid">
     @include('partials.flash')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Vehicles</h1>
+        <h1 class="h3 mb-0 text-gray-800">Head Managers</h1>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
             Add Head Manager
         </button>

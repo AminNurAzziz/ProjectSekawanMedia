@@ -37,4 +37,9 @@ class BranchManagerService
     {
         return $this->branchManagerRepository->approvalByBranchManager($id);
     }
+
+    public function findBranchManager($id)
+    {
+        return $this->branchManagerRepository->find($id);
+    }
 }

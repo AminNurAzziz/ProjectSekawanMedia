@@ -10,7 +10,7 @@
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">History Bookings</h1>
             <div>
-                <button class="d-none d-sm-inline-block btn btn-success shadow-sm" data-toggle="modal" data-target="#returnVehicleModal">
+                <button class="d-none d-sm-inline-block btn btn-primary shadow-sm" data-toggle="modal" data-target="#returnVehicleModal">
                     <i class="fas fa-car fa-sm text-white-50"></i> Return Vehicle  
                 </button>
             </div>
@@ -36,7 +36,7 @@
                         </thead>
                         <tbody>
                             @foreach($getHistoryBooking as $booking)
-                            <tr>
+                            <tr class="{{ $booking->BookingStatus === 'Cancelled' ? 'table-danger' : ($booking->BookingStatus === 'On-Trip' ? 'table-warning' : ($booking->BookingStatus === 'Completed' ? 'table-success' : '')) }}">
                                 <td>{{ $booking->BookerName }}</td>
                                 <td>{{ $booking->VehicleType }}</td>
                                 <td>{{ $booking->Name }}</td>
@@ -44,7 +44,7 @@
                                 <td>{{ $booking->LastOdometerReading }}</td>
                                 <td>{{ $booking->FuelUsed }}</td>
                                 <td>
-                                <span class="badge  @if($booking->BookingStatus == 'Cancelled') badge-danger @elseif($booking->BookingStatus == 'On-Trip') badge-warning @else badge-success @endif">
+                                <span class="badge  @if($booking->BookingStatus == 'Cancelled') badge-danger p-2 @elseif($booking->BookingStatus == 'On-Trip') badge-warning p-2 @else badge-success p-2 @endif">
                                         {{ $booking->BookingStatus }}
                                 </span>
                                 </td>

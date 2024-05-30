@@ -6,6 +6,7 @@ use App\Models\CompanyDriver;
 use App\Http\Requests\StoreCompanyDriverRequest;
 use App\Http\Requests\UpdateCompanyDriverRequest;
 use App\Services\CompanyDriverService;
+use Illuminate\Support\Facades\Log;
 
 class CompanyDriverController extends Controller
 {
@@ -13,73 +14,61 @@ class CompanyDriverController extends Controller
 
     public function __construct(CompanyDriverService $companyDriverService)
     {
+        parent::__construct();
         $this->companyDriverService = $companyDriverService;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $companyDrivers = $this->companyDriverService->getAllCompanyDrivers();
+        try {
+            $companyDrivers = $this->companyDriverService->getAllCompanyDrivers();
 
-        return view('company-drivers.index', compact('companyDrivers'));
+            $this->logService->createLog('Fetched company drivers successfully', 'fetch');
+            return view('company-drivers.index', compact('companyDrivers'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch company drivers: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch company drivers: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCompanyDriverRequest $request)
     {
         $data = $request->validated();
-        $this->companyDriverService->createCompanyDriver($data);
-        return redirect('/company-drivers')->with('success', 'Company Driver created successfully');
+        try {
+            $this->companyDriverService->createCompanyDriver($data);
+
+            $this->logService->createLog('Company Driver created successfully', 'store');
+            return redirect('/company-drivers')->with('success', 'Company Driver created successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create company driver: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create company driver: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CompanyDriver $companyDriver)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CompanyDriver $companyDriver)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateCompanyDriverRequest $request, CompanyDriver $companyDriver)
     {
         $data = $request->validated();
-        $companyDriver = $this->companyDriverService->updateCompanyDriver($data, $companyDriver->DriverID);
+        try {
+            $this->companyDriverService->updateCompanyDriver($data, $companyDriver->DriverID);
 
-        return redirect('/company-drivers')->with('success', 'Company Driver updated successfully');
+            $this->logService->createLog('Company Driver updated successfully', 'update');
+            return redirect('/company-drivers')->with('success', 'Company Driver updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update company driver: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update company driver: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(CompanyDriver $companyDriver)
     {
-        $this->companyDriverService->deleteCompanyDriver($companyDriver->DriverID);
-        return response()->json(
-            [
-                'message' => 'Company Driver deleted successfully'
-            ]
-        );
+        try {
+            $this->companyDriverService->deleteCompanyDriver($companyDriver->DriverID);
+
+            $this->logService->createLog('Company Driver deleted successfully', 'delete');
+            return response()->json(['message' => 'Company Driver deleted successfully']);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete company driver: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete company driver: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -14,68 +14,59 @@ class PositionController extends Controller
 
     public function __construct(PositionService $positionService)
     {
+        parent::__construct();
         $this->positionService = $positionService;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $positions = $this->positionService->getAllPositions();
-        return view('positions.index', compact('positions'));
-        // return response()->json($positions);
+        try {
+            $positions = $this->positionService->getAllPositions();
+
+            $this->logService->createLog('Fetched positions successfully', 'fetch');
+            return view('positions.index', compact('positions'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch positions: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch positions: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StorePositionRequest $request)
     {
-        $this->positionService->createPosition($request->validated());
-        return redirect('/positions')->with('success', 'Position created successfully');
+        try {
+            $this->positionService->createPosition($request->validated());
+
+            $this->logService->createLog('Position created successfully', 'store');
+            return redirect('/positions')->with('success', 'Position created successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create position: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create position: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Position $position)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Position $position)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdatePositionRequest $request, Position $position)
     {
+        try {
+            $this->positionService->updatePosition($request->validated(), $position);
 
-        Log::info('Position updated successfully' . $position);
-        $this->positionService->updatePosition($request->validated(), $position);
-        return redirect('/positions')->with('success', 'Position updated successfully');
+            $this->logService->createLog('Position updated successfully', 'update');
+            return redirect('/positions')->with('success', 'Position updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update position: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update position: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Position $position)
     {
-        $this->positionService->deletePosition($position);
-        return redirect('/positions')->with('success', 'Position deleted successfully');
+        try {
+            $this->positionService->deletePosition($position);
+
+            $this->logService->createLog('Position deleted successfully', 'delete');
+            return redirect('/positions')->with('success', 'Position deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete position: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete position: ' . $e->getMessage());
+        }
     }
 }

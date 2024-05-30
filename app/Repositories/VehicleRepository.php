@@ -29,7 +29,6 @@ class VehicleRepository implements VehicleRepositoryInterface
 
     public function update(array $data, $id)
     {
-        Log::info('VehicleRepository update' . $id);
         // Temukan entitas berdasarkan ID
         $vehicle = Vehicle::find($id);
 
@@ -58,5 +57,33 @@ class VehicleRepository implements VehicleRepositoryInterface
     public function all()
     {
         return Vehicle::all();
+    }
+
+    public function resetKMService($id)
+    {
+        $vehicle = Vehicle::find($id);
+        $vehicle->update(['KM_Need_Service' => $vehicle->ServiceIntervalKM]);
+        return $vehicle;
+    }
+
+    public function addBBM($id, $data)
+    {
+        try {
+            // Mencari kendaraan berdasarkan ID
+            $vehicle = Vehicle::find($id);
+
+            // Mengatur nilai LastBBM dengan nilai baru
+            $vehicle->LastBBM = $data;
+
+            // Menyimpan perubahan ke dalam database
+            $vehicle->save();
+
+            // Mengembalikan kendaraan setelah disimpan
+            return $vehicle;
+        } catch (\Exception $e) {
+            // Tangani jika terjadi kesalahan saat menyimpan
+            Log::error('Failed to add BBM to vehicle: ' . $e->getMessage());
+            throw new \Exception('Failed to add BBM to vehicle: ' . $e->getMessage());
+        }
     }
 }

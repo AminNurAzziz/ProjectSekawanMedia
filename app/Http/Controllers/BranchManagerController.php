@@ -8,7 +8,9 @@ use App\Http\Requests\UpdateBranchManagerRequest;
 use App\Services\BranchManagerService;
 use App\Services\BranchService;
 use App\Services\PositionService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class BranchManagerController extends Controller
 {
@@ -18,84 +20,80 @@ class BranchManagerController extends Controller
 
     public function __construct(BranchManagerService $branchManagerService, BranchService $branchService, PositionService $positionService)
     {
+        parent::__construct();
         $this->branchManagerService = $branchManagerService;
         $this->branchService = $branchService;
         $this->positionService = $positionService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $branchManagers = $this->branchManagerService->getAllBranchManagers();
-        $branches = $this->branchService->getAllBranches();
-        $positions = $this->positionService->getAllPositions();
-        return view('branch-managers.index', compact('branchManagers', 'branches', 'positions'));
+        try {
+            $branchManagers = $this->branchManagerService->getAllBranchManagers();
+            $branches = $this->branchService->getAllBranches();
+            $positions = $this->positionService->getAllPositions();
+
+            $this->logService->createLog('Fetched branch managers successfully', 'fetch');
+            return view('branch-managers.index', compact('branchManagers', 'branches', 'positions'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch branch managers: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch branch managers: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreBranchManagerRequest $request)
     {
         $data = $request->validated();
-        $branchManager = $this->branchManagerService->createBranchManager($data);
-        return redirect('/branch-managers')->with('success', 'Branch Manager created successfully');
+        try {
+            $branchManager = $this->branchManagerService->createBranchManager($data);
+
+            $this->logService->createLog('Branch Manager created successfully', 'store');
+            return redirect('/branch-managers')->with('success', 'Branch Manager created successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create branch manager: ' . $e->getMessage());
+            return redirect('/branch-managers')->with('error', 'Failed to create branch manager: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BranchManager $branchManager)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BranchManager $branchManager)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateBranchManagerRequest $request, BranchManager $branchManager)
     {
         $data = $request->validated();
-        $branchManager = $this->branchManagerService->updateBranchManager($data, $branchManager->ManagerID);
+        try {
+            $branchManager = $this->branchManagerService->updateBranchManager($data, $branchManager->ManagerID);
 
-        return redirect('/branch-managers')->with('success', 'Branch Manager updated successfully');
+            $this->logService->createLog('Branch Manager updated successfully', 'update');
+            return redirect('/branch-managers')->with('success', 'Branch Manager updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update branch manager: ' . $e->getMessage());
+            return redirect('/branch-managers')->with('error', 'Failed to update branch manager: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(BranchManager $branchManager)
     {
-        $this->branchManagerService->deleteBranchManager($branchManager->ManagerID);
-        return redirect('/branch-managers')->with('success', 'Branch Manager deleted successfully');
+        try {
+            $this->branchManagerService->deleteBranchManager($branchManager->ManagerID);
+
+            $this->logService->createLog('Branch Manager deleted successfully', 'delete');
+            return redirect('/branch-managers')->with('success', 'Branch Manager deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete branch manager: ' . $e->getMessage());
+            return redirect('/branch-managers')->with('error', 'Failed to delete branch manager: ' . $e->getMessage());
+        }
     }
 
     public function approvalsToMake()
     {
-        // Ambil daftar booking yang perlu di-approve oleh pengguna
-        $bookings = $this->branchManagerService->approvalByBranchManager(auth()->user()->id);
-
-        // Kembalikan response JSON
-        // return response()->json(['bookings' => $bookings], 200);
-
-        return view('branch-managers.approvals', compact('bookings'));
+        try {
+            $adminOrManager = Session::get('adminOrManager');
+            // dd($adminOrManager);
+            $idUser = $adminOrManager->HeadManagerID ?? $adminOrManager->ManagerID;
+            // dd($idUser);
+            $bookings = $this->branchManagerService->approvalByBranchManager($idUser);
+            return view('branch-managers.approvals', compact('bookings'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch approvals: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch approvals: ' . $e->getMessage());
+        }
     }
 }

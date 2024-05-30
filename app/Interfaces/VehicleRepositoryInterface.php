@@ -9,4 +9,6 @@ interface VehicleRepositoryInterface
     public function delete($id);
     public function find($id);
     public function all();
+    public function resetKMService($id);
+    public function addBBM($id, $data);
 }

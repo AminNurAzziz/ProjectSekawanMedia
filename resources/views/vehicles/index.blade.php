@@ -1,3 +1,29 @@
+<!-- vehicles.edit.blade.php -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit BBM</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form to edit BBM -->
+                <form action="/" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <div class="form-group">
+                        <label for="bbm">BBM (Liter)</label>
+                        <input type="text" class="form-control" id="bbm" name="bbm" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @extends('layouts.layout')
 
 @section('title', 'Vehicles')
@@ -36,7 +62,7 @@
                         </thead>
                         <tbody>
                             @foreach($vehicles as $vehicle)
-                                <tr>
+                                <tr class="{{ $vehicle['VehicleStatus'] == 'Available' && $vehicle['KM_Need_Service'] == 0 ? 'table-success' : ($vehicle['VehicleStatus'] == 'Available' && $vehicle['KM_Need_Service'] < 10 ? 'table-warning' : ($vehicle['VehicleStatus'] == 'Available' ? 'table-info' : 'table-danger')) }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $vehicle['VehicleID'] }}</td>
                                     <td>{{ $vehicle['VehicleModel'] }}</td>
@@ -47,7 +73,13 @@
                                     <td>
                                         @if($vehicle['KM_Need_Service'] == 0)
                                         <span class="badge badge-danger p-2 mr-2">Needs Immediate Service</span>
-                                        <i class="fas fa-redo" title="Reset" style="cursor: pointer;" onclick="resetService({{ $vehicle['VehicleID'] }})"></i>
+                                        <form action="{{ route('reset.km.service', $vehicle['VehicleID']) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-link p-0" title="Reset" onclick="return confirm('Are you sure you want to reset the service KM for this vehicle?');">
+                                                <i class="fas fa-redo" style="cursor: pointer;"></i>
+                                            </button>
+                                        </form>
                                         @elseif($vehicle['KM_Need_Service'] < 10)
                                             <span class="badge badge-warning p-2">{{ $vehicle['KM_Need_Service'] }} KM Left (Service Soon)</span>
                                             <i class="fas fa-redo" title="Reset" style="cursor: pointer;" onclick="resetService({{ $vehicle['VehicleID'] }})"></i>
@@ -58,9 +90,10 @@
                                     
                                     <td>
                                         
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#bbmModal{{ $vehicle['VehicleID'] }}">
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#bbmEditModal{{ $vehicle['VehicleID'] }}">
                                             <i class="fas fa-gas-pump"></i> <!-- Ikon BBM -->
                                         </button>
+                                        
                                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#vehicleModal{{ $vehicle['VehicleID'] }}">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
@@ -77,6 +110,7 @@
                                 @include('vehicles.show')
                                 @include('vehicles.edit')
                                 @include('vehicles.pop-up-delete')
+                                @include('vehicles.pop-up-bbm')
                             @endforeach
                         </tbody>
                     </table>

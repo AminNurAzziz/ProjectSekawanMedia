@@ -14,67 +14,57 @@ class BranchController extends Controller
 
     public function __construct(BranchService $branchService)
     {
+        parent::__construct();
         $this->branchService = $branchService;
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $branches = $this->branchService->getAllBranches();
-        return view('branches.index', compact('branches'));
+        try {
+            $branches = $this->branchService->getAllBranches();
+            $this->logService->createLog('Fetched branches successfully', 'fetch');
+            return view('branches.index', compact('branches'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch branches: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch branches: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreBranchRequest $request)
     {
-        $data = $request->validated();
-        $branch = $this->branchService->createBranch($data);
-        return redirect('/branches')->with('success', 'Branch created successfully');
+        try {
+            $data = $request->validated();
+            $this->branchService->createBranch($data);
+            $this->logService->createLog('Branch created successfully', 'store');
+            return redirect('/branches')->with('success', 'Branch created successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create branch: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create branch: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Branch $branch)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Branch $branch)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateBranchRequest $request, Branch $branch)
     {
-        $data = $request->validated();
-        $branch = $this->branchService->updateBranch($data, $branch->BranchID);
-        return redirect('/branches')->with('success', 'Branch updated successfully');
+        try {
+            $data = $request->validated();
+            $this->branchService->updateBranch($data, $branch->BranchID);
+            $this->logService->createLog('Branch updated successfully', 'update');
+            return redirect('/branches')->with('success', 'Branch updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update branch: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update branch: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Branch $branch)
     {
-        $branch = $this->branchService->deleteBranch($branch->BranchID);
-        return redirect('/branches')->with('success', 'Branch deleted successfully');
+        try {
+            $this->branchService->deleteBranch($branch->BranchID);
+            $this->logService->createLog('Branch deleted successfully', 'delete');
+            return redirect('/branches')->with('success', 'Branch deleted successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete branch: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete branch: ' . $e->getMessage());
+        }
     }
 }

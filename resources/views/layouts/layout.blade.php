@@ -15,7 +15,8 @@
 <body id="page-top">
     {{-- {{ dd(auth()->user()->role) }} --}}
     <!-- Page Wrapper -->
-    <div id="wrapper">
+    <div id="wrapper" @if(request()->path() === 'login') style="height: 100vh;" @endif>
+
         @if(Auth::check() && request()->path() != 'login')
     
             @include('partials.sidebar')
@@ -31,8 +32,9 @@
                 @yield('content')
             </div>
             <!-- End of Main Content -->
-
-            @include('partials.footer')
+            @if(Auth::check() && request()->path() != 'login')
+                @include('partials.footer')
+            @endif
 
         </div>
         <!-- End of Content Wrapper -->
@@ -57,7 +59,6 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-primary" href="/logout">Logout</a>
-                  
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Bookings for Approval</h1>
         <p class="mb-4">List of bookings that require approval.</p>
-
+        @include('partials.flash')
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
@@ -26,7 +26,26 @@
                         </thead>
                         <tbody>
                             @foreach ($bookings as $booking)
-                                <tr>
+                            {{-- {{ dd($booking->BranchManagerApproval)}} --}}
+                            @php
+                            $disableApprove = (Auth::user()->role == 'approver1' && $booking->BranchManagerApproval == 'Approved') 
+                                            || $booking->BranchManagerApproval == 'Rejected' 
+                                            || $booking->BookingStatus == 'Rejected'
+                                            || $booking->HeadOfficeManagerApproval == 'Approved'
+                                            || $booking->HeadOfficeManagerApproval == 'Rejected'
+                                            || $booking->BookingStatus == 'Rejected'
+                                            || (Auth::user()->role == 'approver2' && $booking->BranchManagerApproval !== 'Approved');
+
+                            $disableReject =  (Auth::user()->role == 'approver1' && $booking->BranchManagerApproval == 'Approved') 
+                                            || $booking->BranchManagerApproval == 'Rejected'
+                                            || $booking->BookingStatus == 'Rejected'
+                                            || $booking->HeadOfficeManagerApproval == 'Approved'
+                                            || $booking->HeadOfficeManagerApproval == 'Rejected'
+                                            || $booking->BookingStatus == 'Rejected'
+                                            || (Auth::user()->role == 'approver2' && $booking->BranchManagerApproval !== 'Approved');
+                        @endphp
+
+                                <tr class=" @if($booking->BookingStatus == 'Rejected') table-danger @elseif($booking->BookingStatus == 'Approved') table-success @elseif($booking->BookingStatus == 'Pending') table-warning @endif">
                                     <td>{{ $booking->BookingID }}</td>
                                     <td>{{ $booking->BookerName }}</td>
                                     <td>{{ $booking->VehicleID }}</td>
@@ -35,20 +54,28 @@
                                     <td>{{ $booking->BookingStatus }}</td>
                                     <td>{{ $booking->BranchManagerApproval }}</td>
                                     <td>{{ $booking->HeadOfficeManagerApproval }}</td>
-                                    <td>
+                                    <td class="d-flex justify-content-between">
                                         <!-- Tombol approve -->
                                         <form method="POST" action="/booking/{{ $booking->BookingID }}/Approved">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="btn btn-success">Approve</button>
+                                            <button type="submit" class="btn btn-success btn-sm mr-2" 
+                                                @if($disableApprove) disabled @endif
+                                            >
+                                                Approve
+                                            </button>
                                         </form>
                                         
                                         <!-- Tombol reject -->
                                         <form method="POST" action="/booking/{{ $booking->BookingID }}/Rejected">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="btn btn-danger">Reject</button>
-                                        </form>
+                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                                @if($disableReject) disabled @endif
+                                            >
+                                                Reject
+                                            </button>
+                                        </form>                                    
                                     </td>
                                 </tr>
                             @endforeach

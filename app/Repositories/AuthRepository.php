@@ -40,7 +40,7 @@ class AuthRepository implements AuthRepositoryInterface
         if (Auth::attempt($data)) {
             $user = Auth::user();
             $adminOrManager = null;
-
+            // dd($user->role);
             if ($user->role === 'admin') {
                 $adminOrManager = Admin::where('UserID', $user->id)->first();
             } else if ($user->role === 'approver1') {
@@ -48,7 +48,6 @@ class AuthRepository implements AuthRepositoryInterface
             } else if ($user->role === 'approver2') {
                 $adminOrManager = HeadOfficeManager::where('UserID', $user->id)->first();
             }
-
             return [
                 'status' => 200,
                 'user' => $user,

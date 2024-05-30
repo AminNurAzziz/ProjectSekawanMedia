@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @foreach($bookings as $booking)
-                        <tr>
+                        <tr class="{{ $booking->BookingStatus == 'Approved' ? 'table-success' : 'table-warning' }}">
                             <td>{{ $booking->BookingID }}</td>
                             <td>{{ $booking->BookerName }}</td>
                             <td>{{ $booking->VehicleType }}</td>
@@ -44,40 +44,39 @@
                             <td>{{ $booking->BookingDate }}</td>
                             <td>
                                 @if($booking->BranchManagerApproval == 'Approved')
-                                <span class="badge badge-success">Approved</span>
-                                <div>{{ $booking->BranchManager }}</div>
+                                    <span class="badge badge-success p-2 d-inline-block">Approved</span>
                                 @elseif($booking->BranchManagerApproval == 'Rejected')
-                                <span class="badge badge-danger">Rejected</span>
-                                <div>{{ $booking->BranchManager }}</div>
+                                    <span class="badge badge-danger p-2 d-inline-block">Rejected</span>
                                 @else
-                                <span class="badge badge-warning">Pending</span>
-                                <div>{{ $booking->BranchManager }}</div>
+                                    <span class="badge badge-warning p-2 d-inline-block">Pending</span>
                                 @endif
+                                <div>{{ $booking->BranchManager }}</div>
                             </td>
+                            
                             <td>
                                 @if($booking->HeadOfficeManagerApproval == 'Approved')
-                                    <span class="badge badge-success">Approved</span>
-                                    <div>{{ $booking->HeadOfficeManager }}</div>
+                                    <span class="badge badge-success p-2">Approved</span>
+                                    <p>{{ $booking->HeadOfficeManager }}</p>
                                 @elseif($booking->HeadOfficeManagerApproval == 'Rejected')
-                                    <span class="badge badge-danger">Rejected</span>
-                                    <div>{{ $booking->HeadOfficeManager }}</div>
+                                    <span class="badge badge-danger p-2">Rejected</span>
+                                    <p>{{ $booking->HeadOfficeManager }}</p>
                                 @else
-                                    <span class="badge badge-warning">Pending</span>
-                                    <div>{{ $booking->HeadOfficeManager }}</div>
+                                    <span class="badge badge-warning p-2">Pending</span>
+                                    <p>{{ $booking->HeadOfficeManager }}</p>
                                 @endif
                             </td>
 
                             <td>
                                 @if($booking->BookingStatus == 'Approved')
-                                    <span class="badge badge-success">
+                                    <span class="badge badge-success p-2">
                                         Approved
                                     </span>
                                 @elseif($booking->BookingStatus == 'Rejected')
-                                    <span class="badge badge-danger">
+                                    <span class="badge badge-danger p-2">
                                         Rejected
                                     </span>
                                 @else
-                                    <span class="badge badge-warning">
+                                    <span class="badge badge-warning p-2">
                                         Pending
                                     </span>
                                 @endif
