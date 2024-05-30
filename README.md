@@ -56,7 +56,3 @@
 
 - Gunakan informasi login yang disediakan di atas untuk masuk ke aplikasi sesuai peran pengguna Anda.
 
-## Catatan Tambahan
-
-- Pastikan untuk membaca [dokumentasi Laravel](https://laravel.com/docs) resmi untuk informasi lebih lanjut tentang penggunaan dan pengembangan dengan Laravel.
-- Jangan ragu untuk menghubungi pengembang aplikasi jika mengalami masalah atau memiliki pertanyaan lebih lanjut.
