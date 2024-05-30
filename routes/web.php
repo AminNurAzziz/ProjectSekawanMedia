@@ -27,7 +27,6 @@ use App\Http\Controllers\HeadOfficeManagerController;
 */
 
 Route::middleware(['auth'])->group(function () {
-    // Rute-rute yang perlu diakses oleh pengguna yang sudah diotentikasi
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/report', [DashboardController::class, 'dashboardReport'])->name('dashboard.report');
     Route::get('/download-pdf', [DashboardController::class, 'downloadPDF'])->name('dashboard.pdf');
@@ -47,6 +46,15 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('positions', PositionController::class);
     Route::resource('branches', BranchController::class);
     Route::resource('branch-managers', BranchManagerController::class);
+
+    Route::get('/approval', [BranchManagerController::class, 'approvalsToMake'])->name('approvals.index');
+    Route::patch('booking/{id}/{status}', [BookingController::class, 'updateApproval'])->name('bookings.approval');
+
+    Route::get('/logs', [LogProcessController::class, 'index'])->name('logs.index');
+    Route::delete('/logs', [LogProcessController::class, 'destroyAll'])->name('logs.reset');
+
+    Route::patch('/reset-km-service/{id}', [VehicleController::class, 'resetKMService'])->name('reset.km.service');
+    Route::patch('/add-bbm/{id}', [VehicleController::class, 'addBBM'])->name('add.bbm');
 });
 
 Route::get('/login', function () {
@@ -54,25 +62,11 @@ Route::get('/login', function () {
         return redirect('/dashboard');
     }
     return view('auth.login');
-});
-
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+})->name('login.form');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-
-Route::get('/approval', [BranchManagerController::class, 'approvalsToMake'])->name('approvals.index');
-
-
-Route::patch('booking/{id}/{status}', [BookingController::class, 'updateApproval'])->name('bookings.approval');
-
-Route::get('/logs', [LogProcessController::class, 'index'])->name('logs.index');
-Route::delete('/logs', [LogProcessController::class, 'destroyAll'])->name('logs.reset');
-
-Route::patch('/reset-km-service/{id}', [VehicleController::class, 'resetKMService'])->name('reset.km.service');
-Route::patch('/add-bbm/{id}', [VehicleController::class, 'addBBM'])->name('add.bbm');
-
-
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/', function () {
     return redirect('/login');
-});
+})->name('home');
