@@ -43,7 +43,7 @@
 - Pastikan database yang diatur dalam `.env` telah dibuat.
 - Jalankan perintah `php artisan migrate` untuk menjalankan semua migrasi database yang diperlukan.
 
-### 5. Seed Database (Opsional)
+### 5. Seed Database
 
 - Jika ada data dummy yang perlu ditambahkan, jalankan perintah `php artisan db:seed` untuk mengisi database dengan data awal.
 
