@@ -6,25 +6,25 @@
    - Username: admin
    - Password: password
 
-2. **Atasan (Approver) - Level 1**
+2. **Atasan Cabang (Approver) - Level 1**
    - Username: approver1_user
    - Password: password
 
-3. **Atasan (Approver) - Level 2**
+3. **Atasan Pusat (Approver) - Level 2**
    - Username: approver2_user
    - Password: password
 
 ## Informasi Teknis
 
 - **Database Version:** MySQL 8.0.30
-- **PHP Version:** Minimal PHP 7.4
+- **PHP Version:** PHP 8.3.3 (cli) 
 - **Framework:** Laravel Framework 10.48.11
 
 ## Panduan Penggunaan Aplikasi
 
 ### 1. Instalasi
 
-- Pastikan komputer Anda telah terpasang PHP minimal versi 7.4.
+- Pastikan komputer Anda telah terpasang HP 8.3.3 (cli) 
 - Clone repositori aplikasi dari [GitHub](https://github.com/namauser/aplikasi-manajemen-persetujuan).
 - Buka terminal dan arahkan ke direktori aplikasi.
 
