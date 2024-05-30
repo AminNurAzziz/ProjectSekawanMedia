@@ -19,14 +19,12 @@ class PeriodicReport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
+            'No',
             'Booking ID',
             'Return Date',
-            'Last Odometer Reading',
+            'Last Odometer',
             'Fuel Used',
             'Booking Status',
-            'Vehicle ID',
-            'Driver ID',
-            'Branch ID',
             'Created At',
             'Updated At',
         ];
